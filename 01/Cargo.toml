@@ -1,0 +1,19 @@
+[package]
+name = "aoc2022-1"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+# Run with: cargo build --release
+#
+# -rwxr-xr-x  1 mauricem  staff  662566 Dec  1 21:50 target/debug/part_two
+# -rwxr-xr-x  1 mauricem  staff  269224 Dec  1 22:05 target/release/part_two
+#
+[profile.release]
+strip = true      # automatically strip symbols
+opt-level = "s"   # optimize for size
+lto = true        # Enable link time optimization
+codegen-units = 1 # Maximize size reduction optimizations
