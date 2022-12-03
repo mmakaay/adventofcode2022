@@ -1,8 +1,9 @@
 use std::io;
 
 fn main() {
-    let rucksacks = get_rucksacks();
-    let groups = rucksacks.chunks(3);
+    let input = io::read_to_string(io::stdin()).unwrap();
+    let rucksacks = get_rucksacks(&input);
+    let groups = rucksacks.chunks(3).map(|x| (x[0], x[1], x[2]));
     let priority: usize = groups
         .map(get_common_item_in_group)
         .map(get_score_for_item)
@@ -11,26 +12,25 @@ fn main() {
     println!("{priority:?}");
 }
 
-fn get_rucksacks() -> Vec<String> {
-    let input = io::read_to_string(io::stdin()).unwrap();
+fn get_rucksacks(input: &String) -> Vec<&[u8]> {
     input
         .trim()
         .split("\n")
-        .map(|s| s.to_string())
-        .collect::<Vec<String>>()
+        .map(|sack| sack.as_bytes())
+        .collect::<Vec<&[u8]>>()
 }
 
-fn get_common_item_in_group(group: &[String]) -> char {
-    group[0]
-        .chars()
-        .filter(|item| group[1].contains(*item) && group[2].contains(*item))
+fn get_common_item_in_group((sack_a, sack_b, sack_c): (&[u8], &[u8], &[u8])) -> u8 {
+    *(sack_a
+        .iter()
+        .filter(|&item| sack_b.contains(item) && sack_c.contains(item))
         .next()
-        .unwrap()
+        .unwrap())
 }
 
-fn get_score_for_item(item: char) -> usize {
-    match item as u8 {
-        n if (b'a'..=b'z').contains(&n) => (n - b'a' + 1) as usize,
-        n => (n - b'A' + 27) as usize,
+fn get_score_for_item(item: u8) -> usize {
+    match item {
+        b'a'..=b'z' => (item - b'a' + 1) as usize,
+        _ => (item - b'A' + 27) as usize,
     }
 }
