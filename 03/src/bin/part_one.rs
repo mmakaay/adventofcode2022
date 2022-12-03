@@ -1,13 +1,14 @@
 use std::io;
 
 fn main() {
-    let rucksacks: usize = get_rucksacks()
+    let answer: usize = get_rucksacks()
         .into_iter()
         .map(get_items_for_left_and_right_rucksack_bags)
         .map(get_common_item_in_left_and_right_bags)
         .map(get_score_for_item)
         .sum();
-    println!("{rucksacks:?}");
+        
+    println!("{answer:?}");
 }
 
 fn get_rucksacks() -> Vec<String> {

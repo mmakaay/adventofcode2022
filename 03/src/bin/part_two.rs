@@ -4,12 +4,13 @@ fn main() {
     let input = io::read_to_string(io::stdin()).unwrap();
     let rucksacks = get_rucksacks(&input);
     let groups = rucksacks.chunks(3).map(|x| (x[0], x[1], x[2]));
-    let priority: usize = groups
+    let priorities = groups
         .map(get_common_item_in_group)
         .map(get_score_for_item)
-        .sum();
+        .collect::<Vec<usize>>();
 
-    println!("{priority:?}");
+    let answer: usize = priorities.iter().sum();
+    println!("{answer:?}");
 }
 
 fn get_rucksacks(input: &String) -> Vec<&[u8]> {
