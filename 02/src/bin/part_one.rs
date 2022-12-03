@@ -9,7 +9,8 @@ use std::io;
 // - additional score based on win=6, draw=3 (and lose=0)
 
 fn main() {
-    let score: usize = io::read_to_string(io::stdin()).unwrap()
+    let score: usize = io::read_to_string(io::stdin())
+        .unwrap()
         .split("\n")
         .map(|turn| match turn {
             "A X" => 1 + 3, // rock     = rock      draw
@@ -21,9 +22,9 @@ fn main() {
             "C X" => 1 + 6, // rock     > scissors  win
             "C Y" => 2 + 0, // paper    < scissors  lose
             "C Z" => 3 + 3, // scissors = scissors  draw
-            _ => 0, 
+            _ => 0,
         })
         .sum();
-    
+
     println!("{score:?}");
 }

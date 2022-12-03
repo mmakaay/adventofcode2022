@@ -7,7 +7,8 @@ fn main() {
 }
 
 fn read_calories_per_elve() -> Vec<usize> {
-    read_lines_from_stdin().into_iter()
+    read_lines_from_stdin()
+        .into_iter()
         .fold(vec![0], |mut elves, food| {
             match food.is_empty() {
                 true => elves.push(0),

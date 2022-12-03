@@ -6,7 +6,7 @@ fn main() {
             Ok(n) => sum = sum + n,
             Err(_) => {
                 total = core::cmp::max(total, sum);
-                sum = 0; 
+                sum = 0;
             }
         }
     }
@@ -14,5 +14,8 @@ fn main() {
 }
 
 fn read_lines_from_stdin() -> Vec<String> {
-    std::io::stdin().lines().map(|s| s.unwrap()).collect::<Vec<String>>()
+    std::io::stdin()
+        .lines()
+        .map(|s| s.unwrap())
+        .collect::<Vec<String>>()
 }

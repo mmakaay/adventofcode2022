@@ -8,18 +8,24 @@ fn main() {
         .map(get_score_for_item)
         .sum();
 
-       println!("{priority:?}");
+    println!("{priority:?}");
 }
 
 fn get_rucksacks() -> Vec<String> {
     let input = io::read_to_string(io::stdin()).unwrap();
-    input.trim().split("\n").map(|s| s.to_string()).collect::<Vec<String>>()
+    input
+        .trim()
+        .split("\n")
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>()
 }
 
 fn get_common_item_in_group(group: &[String]) -> char {
-    group[0].chars()
+    group[0]
+        .chars()
         .filter(|item| group[1].contains(*item) && group[2].contains(*item))
-        .next().unwrap()
+        .next()
+        .unwrap()
 }
 
 fn get_score_for_item(item: char) -> usize {

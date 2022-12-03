@@ -1,7 +1,8 @@
 use std::io;
 
 fn main() {
-    let rucksacks: usize = get_rucksacks().into_iter()
+    let rucksacks: usize = get_rucksacks()
+        .into_iter()
         .map(get_items_for_left_and_right_rucksack_bags)
         .map(get_common_item_in_left_and_right_bags)
         .map(get_score_for_item)
@@ -11,7 +12,11 @@ fn main() {
 
 fn get_rucksacks() -> Vec<String> {
     let input = io::read_to_string(io::stdin()).unwrap();
-    input.trim().split("\n").map(|s| s.to_string()).collect::<Vec<String>>()
+    input
+        .trim()
+        .split("\n")
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>()
 }
 
 fn get_items_for_left_and_right_rucksack_bags(sack: String) -> (String, String) {
@@ -20,7 +25,10 @@ fn get_items_for_left_and_right_rucksack_bags(sack: String) -> (String, String) 
 }
 
 fn get_common_item_in_left_and_right_bags((left, right): (String, String)) -> char {
-    left.chars().filter(|item| right.contains(*item)).next().unwrap()
+    left.chars()
+        .filter(|item| right.contains(*item))
+        .next()
+        .unwrap()
 }
 
 fn get_score_for_item(item: char) -> usize {
