@@ -1,8 +1,8 @@
 use std::io;
 
 // Input legend:
-// A, B, C = rock, paper, scissors
-// X, Y, Z = lose, draw, win
+// - A, B, C = rock, paper, scissors
+// - X, Y, Z = lose, draw, win
 //
 // Score per turn:
 // - base score based on rock=1, paper=2, scissors=3
