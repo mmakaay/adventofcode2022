@@ -23,9 +23,8 @@ fn get_common_item_in_group(group: &[String]) -> char {
 }
 
 fn get_score_for_item(item: char) -> usize {
-    if item as u8 >= b'a' && item as u8 <= b'z' {
-        (item as u8 - b'a' + 1) as usize
-    } else {
-        (item as u8 - b'A' + 27) as usize
+    match item as u8 {
+        n if (b'a'..=b'z').contains(&n) => (n - b'a' + 1) as usize,
+        n => (n - b'A' + 27) as usize,
     }
 }
