@@ -6,6 +6,7 @@ type AssignmentPair = (Assignment, Assignment);
 
 trait Overlap {
     fn overlaps_with(&self, other: &Self) -> bool;
+    fn 
 }
 
 impl Overlap for Assignment {
@@ -30,11 +31,11 @@ fn main() {
             (p[0]..=p[1], p[2]..=p[3])
         })
         .collect();
-    let pairs_with_full_overlap: Vec<&AssignmentPair> = pairs
+    let pairs_with_overlap: Vec<&AssignmentPair> = pairs
         .iter()
         .filter(|(a, b)| a.overlaps_with(&b))
         .collect();
 
-    let answer = pairs_with_full_overlap.len();
+    let answer = pairs_with_overlap.len();
     println!("{answer}");
 }
