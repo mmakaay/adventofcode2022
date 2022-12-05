@@ -7,9 +7,7 @@ type Procedure = Vec<ProcedureStep>;
 
 fn main() {
     let (mut stacks, procedure) = read_input();
-    for step in procedure {
-        apply_procecure_step(&mut stacks, step);
-    }
+    apply_procedure(&mut stacks, procedure);
     send_top_crates_message(&stacks);
 }
 
@@ -49,11 +47,13 @@ fn parse_procedure_from_input(input: &String) -> Procedure {
         .collect()
 }
 
-fn apply_procecure_step(stacks: &mut Stacks, (n, from, to): ProcedureStep) {
-    let drain_pos = stacks[from].len() - n;
-    for _ in 0..n {
-        let moved_crate = stacks[from].remove(drain_pos);
-        stacks[to].push(moved_crate);
+fn apply_procedure(stacks: &mut Stacks, procedure: Procedure) {
+    for (n, from, to) in procedure {
+        for _ in 0..n {
+            if let Some(c) = stacks[from].pop() {
+                stacks[to].push(c);
+            }
+        }
     }
 }
 
