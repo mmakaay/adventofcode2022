@@ -1,4 +1,5 @@
 */target
 *.sw?
 .code-workspace.*
+.DS_Store
 
