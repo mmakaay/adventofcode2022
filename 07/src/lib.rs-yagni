@@ -1,0 +1,170 @@
+// Missing features, because they are not required for the assignment:
+// - Named files and directories
+// - Duplicate name detection when adding entries to a directory
+
+#[derive(Debug)]
+pub struct Tree {
+    pub node: Entry,
+}
+
+#[derive(Debug)]
+pub enum Entry {
+    File(usize),
+    Directory(Vec<Entry>),
+}
+
+pub fn newdir() -> Entry {
+    Entry::Directory(vec![])
+}
+
+pub fn newfile(of_size: usize) -> Entry {
+    Entry::File(of_size)
+}
+
+pub fn add_entry(parent: &mut Entry, new_entry: Entry) {
+    match parent {
+        Entry::Directory(subdirs) => {
+            subdirs.push(new_entry);
+        }
+        _ => panic!("add_entry(...) called for non-Entry::Directory"),
+    }
+}
+
+impl Tree {
+    pub fn new() -> Self {
+        Self {
+            node: Entry::Directory(vec![]),
+        }
+    }
+
+    pub fn from_input(input: &str) -> Tree {
+        let mut tree = Tree::new();
+        let mut stack = vec![];
+        for line in input.trim().split("\n") {
+            if line == "$ cd .." {
+                if let Some(entry) = stack.pop() {
+                    if let Some(parent) = stack.last_mut() {
+                        add_entry(parent, entry);
+                    } else {
+                        add_entry(&mut tree.node, entry);
+                    }
+                }
+            } else if line.starts_with("dir ") {
+                let subdir = newdir();
+                stack.push(subdir);
+            } else if line.starts_with("$") {
+                // NOOP
+            } else {
+                if let Some((size_str, _)) = line.split_once(' ') {
+                    let size = size_str.parse::<usize>().unwrap();
+                    let file = newfile(size);
+                    if let Some(parent) = stack.last_mut() {
+                        add_entry(parent, file);
+                    } else {
+                        add_entry(&mut tree.node, file);
+                    }
+                } else {
+                    panic!("Invalid file line: {line:?}");
+                }
+            }
+        }
+        for entry in stack.pop() {
+            if let Some(parent) = stack.last_mut() {
+                add_entry(parent, entry);
+            } else {
+                add_entry(&mut tree.node, entry);
+            }
+        }
+        tree
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    fn dir_len(node: &Entry) -> usize {
+        dir_entries(node).len()
+    }
+
+    fn dir_entries(node: &Entry) -> &Vec<Entry> {
+        match *node {
+            Entry::Directory(ref entries) => entries,
+            _ => panic!("Entry is not a directory"),
+        }
+    }
+
+    #[test]
+    fn test_construct_root_only() {
+        let root = Tree::new();
+        assert_eq!(0, dir_len(&root.node));
+    }
+
+    #[test]
+    fn test_add_subdirectories_to_root() {
+        let mut root = Tree::new();
+        add_entry(&mut root.node, newdir());
+        assert_eq!(1, dir_len(&root.node));
+        add_entry(&mut root.node, newdir());
+        assert_eq!(2, dir_len(&root.node));
+    }
+
+    #[test]
+    fn test_add_entries_to_root() {
+        let mut root = Tree::new();
+        assert_eq!(0, dir_len(&root.node));
+        add_entry(&mut root.node, newfile(1000));
+        add_entry(&mut root.node, newfile(2000));
+        add_entry(&mut root.node, newdir());
+        assert_eq!(3, dir_len(&root.node));
+    }
+
+    #[test]
+    fn test_add_entries_to_subdirectory() {
+        let mut root = Tree::new();
+        let mut subdir = newdir();
+        add_entry(&mut subdir, newfile(1234));
+        add_entry(&mut subdir, newfile(2345));
+        add_entry(&mut root.node, subdir);
+
+        if let Entry::Directory(ref root_dirs) = root.node {
+            assert_eq!(1, root_dirs.len());
+            let subdir = &root_dirs[0];
+            let entries = dir_entries(&subdir);
+            assert_eq!(2, entries.len());
+            for (i, entry) in entries.iter().enumerate() {
+                match entry {
+                    Entry::File(ref size) => {
+                        let expected_size = if i == 0 { 1234 } else { 2345 };
+                        assert_eq!(expected_size, *size);
+                    }
+                    _ => panic!("Only file entries were expected"),
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn tree_from_empty_input() {
+        let tree = Tree::from_input("");
+        assert_eq!(0, dir_len(&tree.node));
+    }
+
+    #[test]
+    fn tree_from_complete_input_for_empty_root() {
+        let tree = Tree::from_input("$ cd /\n$ ls\n");
+        assert_eq!(0, dir_len(&tree.node));
+    }
+
+    #[test]
+    fn tree_from_input_with_one_empty_subdir() {
+        let tree = Tree::from_input("$ cd /\n$ ls\ndir a\n");
+        assert_eq!(1, dir_len(&tree.node));
+    }
+
+    #[test]
+    fn tree_from_input_with_some_more_stuff() {
+        let tree = Tree::from_input("$ cd /\n$ ls\ndir a\ndir b\n1234 file1\n2345 file2\n$ cd b\n$ ls\n1111 file3\n");
+        println!("{:?}", tree.node);
+    }
+}
